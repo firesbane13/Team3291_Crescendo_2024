@@ -7,6 +7,8 @@ package frc.robot;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import frc.lib.config.SwerveModuleConstants;
 
@@ -49,9 +51,38 @@ public final class Constants {
   }
 
   public static class Swerve {
+    public static final double stickDeadband = 0.1;//configure and mess around with later
+    public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW- 
+
+    public static final double trackWidth = Units.inchesToMeters(21.25);
+    public static final double wheelBase = Units.inchesToMeters(21.25);
     public static final double wheelDiameter = Units.inchesToMeters(4.0);
+    public static final double wheelCircumference = wheelDiameter * Math.PI;
     public static final double driveGearRatio = (6.75 / 1.0); // 6.75:1
     public static final double angleGearRatio = ((150/7) / 1.0); // 150/7:1
+
+    public static final SwerveDriveKinematics swerveKinematics =
+        new SwerveDriveKinematics(
+            //front left
+            new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
+            //front right
+            new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
+            //back left
+            new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
+            //Back right
+            new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
+
+    /* Swerve Profiling Values */
+    // Meters per second IN THEORY
+    public static final double maxSpeed = 4.4196;
+
+    /**
+     * Find out?
+     * 
+     * In theory the max speed is already given, but I can't find the max
+     * angular velocity, so we'll probably calculate both anyways
+     */
+    public static final double maxAngularVelocity = 11.5;
 
     // Swerve Voltage Compensation
     public static final double voltageComp = 12.0;

@@ -7,9 +7,12 @@ import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.lib.config.SwerveModuleConstants;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
+import frc.robot.Constants;
 import frc.robot.Constants.Swerve;
 
 public class SwerveModule {
@@ -53,6 +56,11 @@ public class SwerveModule {
      */
     private PIDController anglePid;
 
+    /**
+     * 
+     * @param moduleNumber
+     * @param moduleConstants
+     */
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {
         // This is the module identifier.
         this.moduleNumber = moduleNumber;
@@ -60,14 +68,14 @@ public class SwerveModule {
         // This is the offset of the wheel in relation to the 0 position of the CANCoder.
         this.angleOffset  = moduleConstants.angleOffset;
 
-        // Initializing the angle motor PID Controller
+        // Initializing the angle motor PID Controller with PID values
         this.anglePid = new PIDController(
             Swerve.angleKP,
             Swerve.angleKI,
             Swerve.angleKD
         );
 
-        // Initializing the CANCoder for the 
+        // Initializing the CANCoder with the desired device ID
         this.angleEncoder = new CANcoder(moduleConstants.canCoderId);
     }
 
@@ -88,7 +96,7 @@ public class SwerveModule {
         // Set motor to original specs
         this.driveMotor.restoreFactoryDefaults();
 
-        // This sets the transmission rate of data 
+        // This sets the transmission rate of data all channels to be faster
         CANSparkMaxUtil.setCANSparkMaxBusUsage(driveMotor, Usage.kAll);
 
         // Sets the current limit to the drive motor in AMPs
@@ -109,10 +117,103 @@ public class SwerveModule {
         // Sets the voltage compensation setting for all modes on the SPARK and enables voltage compensation.
         this.driveMotor.enableVoltageCompensation(Swerve.voltageComp);
 
-        // Writes values to the motor
+        // Writes values to the motor firmware
         this.driveMotor.burnFlash();
 
-        // Set starting position of the drive encoder
+        // Set starting position of the drive encoder to 0.0
         this.driveEncoder.setPosition(0.0);
+    }
+
+    /**
+     * 
+     */
+    private void configAngleMotor() {
+        // Set motor to the original specs
+        this.angleMotor.restoreFactoryDefaults();
+
+        // Sets the transmission rate of the position channel as faster.
+        CANSparkMaxUtil.setCANSparkMaxBusUsage(angleMotor, Usage.kPositionOnly);
+
+        // Sets the current limit to the angle motor in AMPs
+        this.angleMotor.setSmartCurrentLimit(Swerve.angleContinuousCurrentLimit);
+
+        // Invert angle motor (currently, true)
+        this.angleMotor.setInverted(Swerve.angleInvert);
+
+        // WHen the motor isn't being used, set to brake mode
+        this.angleMotor.setIdleMode(IdleMode.kBrake);
+
+        // Set the conversion factor for position of the encoder. Multiplied by the native output units to give you position.
+        this.integratedAngleEncoder.setPositionConversionFactor(Swerve.angleConversionFactor);
+
+        // Sets the voltage compensation setting for all modes on the SPARK and enables voltage compensation.
+        this.angleMotor.enableVoltageCompensation(Swerve.voltageComp);
+
+        // Writes values to the motor firmware
+        this.angleMotor.burnFlash();
+    }
+
+    /**
+     * 
+     * @param desiredState
+     */
+    private void setSpeed(SwerveModuleState desiredState) {
+        Rotation2d desiredAngle;
+        
+        // Prevent rotating module if speed is less then 1%. Prevents jittering.
+        if ((Math.abs(desiredState.speedMetersPerSecond) / Swerve.maxSpeed) < 0.01) {
+            desiredAngle = this.lastAngle;
+        } else {
+            desiredAngle = desiredState.angle;
+        }
+            
+        // Save the last angle we wanted to move too
+        this.lastAngle = desiredAngle;
+    
+        Rotation2d currentAngle = this.getCanCoder();
+
+        // Returns -180 to 180
+        Double currentDegrees = currentAngle.getDegrees(); 
+
+        // Returns -180 to 180 plus the angle offset constant we determined for this module
+        Double desiredDegrees = desiredAngle.getDegrees() + this.angleOffset.getDegrees(); 
+        
+        /**
+         * Calculate the difference between the current degrees and desired degrees.
+         * Adding 180 to convert it back to 360 degress
+         * Then convert back to -180 to 180
+         * 
+         * At least that's what I think it's doing.
+         */
+        Double diffDegrees = (currentDegrees - desiredDegrees + 180) % 360 - 180;
+    
+        if (diffDegrees < -180) {
+            diffDegrees = diffDegrees + 360;
+        }
+    
+        // Calculate the PID value of -1 to 1 based on the degrees we calculated above
+        Double value = this.anglePid.calculate(diffDegrees, 0);
+    
+        // Add turn the angular motor.
+        this.angleMotor.set(value);
+    }
+
+    public Rotation2d getCanCoder() {
+        return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition().getValueAsDouble());
+    }
+
+    public SwerveModuleState getState() {
+        return new SwerveModuleState(this.driveEncoder.getVelocity(), this.getCanCoder());
+    }
+
+    public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(
+            (this.driveEncoder.getPosition() * (Swerve.wheelCircumference / (Swerve.driveGearRatio * 42))), 
+            this.getCanCoder()
+        );
+    }
+    
+    public void resetToAbsolute() {
+      this.lastAngle = Rotation2d.fromDegrees(0);
     }
 }
