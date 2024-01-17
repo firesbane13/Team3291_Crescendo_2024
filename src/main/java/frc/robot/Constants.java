@@ -61,6 +61,11 @@ public final class Constants {
     public static final double driveGearRatio = (6.75 / 1.0); // 6.75:1
     public static final double angleGearRatio = ((150/7) / 1.0); // 150/7:1
 
+    public static final double kMaxTranslationAcceleration = 3.0; //meters per second squared
+    public static final double kMaxStrafeAcceleration = 3.0; //meters per second squared
+    public static final double kMaxRotationAcceleration = 3.0; //radians per second squared
+
+    // Swerve Kinematics
     public static final SwerveDriveKinematics swerveKinematics =
         new SwerveDriveKinematics(
             //front left

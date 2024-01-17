@@ -157,7 +157,7 @@ public class SwerveModule {
      * 
      * @param desiredState
      */
-    private void setSpeed(SwerveModuleState desiredState) {
+    private void setAngle(SwerveModuleState desiredState) {
         Rotation2d desiredAngle;
         
         // Prevent rotating module if speed is less then 1%. Prevents jittering.
@@ -198,6 +198,19 @@ public class SwerveModule {
         this.angleMotor.set(value);
     }
 
+    private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
+        // If we are in open loop mode, set the drive motor to the desired speed
+        // if (isOpenLoop) {
+            this.driveMotor.set(desiredState.speedMetersPerSecond / Swerve.maxSpeed);
+        // } else {
+        //     // If we are in closed loop mode, set the drive motor to the desired speed
+        //     this.driveMotor.set(
+        //         this.driveEncoder.getVelocityConversionFactor() * 
+        //        desiredState.speedMetersPerSecond / Swerve.maxSpeed
+        //    );
+        // }
+    }
+
     public Rotation2d getCanCoder() {
         return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition().getValueAsDouble());
     }
@@ -216,4 +229,11 @@ public class SwerveModule {
     public void resetToAbsolute() {
       this.lastAngle = Rotation2d.fromDegrees(0);
     }
+
+    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
+        setAngle(desiredState);
+        setSpeed(desiredState, isOpenLoop);
+    }
+
+
 }

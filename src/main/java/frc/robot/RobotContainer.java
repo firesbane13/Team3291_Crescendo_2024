@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.Constants.Swerve;
 // import frc.robot.Constants.OperatorConstants;
 // import frc.robot.commands.Autos;
 // import frc.robot.commands.ExampleCommand;
@@ -11,6 +12,7 @@ import frc.robot.commands.autonomous.Auto01;
 import frc.robot.commands.autonomous.Auto02;
 import frc.robot.commands.climber.ClimbUpCommand;
 import frc.robot.commands.climber.LowerRobotCommand;
+import frc.robot.commands.drivetrain.SwerveDrive;
 import frc.robot.commands.intake.PickUpCommand;
 import frc.robot.commands.intake.ReleasePieceCommand;
 import frc.robot.commands.launcher.LaunchCommand;
@@ -18,12 +20,14 @@ import frc.robot.subsystems.ClimberSubsystem;
 // import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 // import frc.robot.subsystems.VisionSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -49,10 +53,14 @@ public class RobotContainer {
   SendableChooser<Command> m_Chooser = new SendableChooser<>();
 
   // SUBSYSTEMS
+  private SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
   private LauncherSubsystem launcherSubsystem = new LauncherSubsystem();
   private ClimberSubsystem climberSubsystem = new ClimberSubsystem();
   private IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   //private VisionSubsystem visionSubsystem = new VisionSubsystem();
+
+  // DRIVE TRAIN
+
 
   // LAUNCHER
   private LaunchCommand launch = new LaunchCommand(launcherSubsystem);
@@ -68,6 +76,8 @@ public class RobotContainer {
   // CONTROLLERS
   public CommandJoystick controller00 = new CommandJoystick(Constants.OperatorConstants.PrimaryControllerPort);
   public CommandJoystick controller01 = new CommandJoystick(Constants.OperatorConstants.SecondaryControllerPort);
+
+  public final JoystickButton robotCentricButton = new JoystickButton(controller00.getHID(), Constants.ControllerButtons.lb);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -98,6 +108,16 @@ public class RobotContainer {
     m_Chooser.setDefaultOption("Autonmous 01", auto01);
     m_Chooser.addOption("Autonomous 02", auto02);
     SmartDashboard.putData("Autonomous Choices", m_Chooser);
+
+    swerveSubsystem.setDefaultCommand(
+      new SwerveDrive(
+        swerveSubsystem,
+        () -> controller00.getRawAxis(1),
+        () -> controller00.getRawAxis(0),
+        () -> controller00.getRawAxis(4),
+        () -> robotCentricButton.getAsBoolean()
+      )
+    );
 
     controller01.button(Constants.ControllerButtons.a).whileTrue(launch);
     controller01.button(Constants.ControllerButtons.b).whileTrue(climbUp);
