@@ -198,4 +198,34 @@ public final class Constants {
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
   }
+
+  public static final class Launcher {
+    public static final int launcherMotorID = 7;
+    public static final int feederMotorID = 8;
+
+    public static final double launcherSpeed = 1.0;
+    public static final double feederSpeed = 0.5;
+
+    public static final double launcherSpeedSlow = 0.25;
+    public static final double feederSpeedSlow = 0.25;
+  }
+
+  public static final class Intake {
+    public static final int intakeMotorID = 9;
+    public static final int intakeRotationMotorID = 10;
+
+    public static final double intakeSpeed = 0.5;
+    public static final double intakeRotationSpeed = 0.5;
+
+    public static final double intakeSpeedSlow = 0.25;
+  }
+
+  public static final class Climber {
+    public static final int climberMotorLeftID = 11;
+    public static final int climberMotorRightID = 12;
+
+    public static final double climberSpeed = 0.5;
+
+    public static final double climberSpeedSlow = 0.25;
+  }
 }
