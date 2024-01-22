@@ -1,18 +1,22 @@
 package frc.robot.modules;
 
+import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.lib.config.CTREConfigs;
 import frc.lib.config.SwerveModuleConstants;
+import frc.lib.util.CANCoderUtil;
+import frc.lib.util.CANCoderUtil.CCUsage;
 import frc.lib.util.CANSparkMaxUtil;
 import frc.lib.util.CANSparkMaxUtil.Usage;
-import frc.robot.Constants;
 import frc.robot.Constants.Swerve;
 
 public class SwerveModule {
@@ -48,7 +52,8 @@ public class SwerveModule {
     private RelativeEncoder integratedAngleEncoder;
 
     // Used to get the current angle (direction) of the wheel 
-    private CANcoder angleEncoder;
+    private CANcoder angleEncoderV6;
+    private CANCoder angleEncoder;
 
     /** 
      * Used to PID control the angle motor power level.   The angle is converted from 
@@ -76,7 +81,25 @@ public class SwerveModule {
         );
 
         // Initializing the CANCoder with the desired device ID
-        this.angleEncoder = new CANcoder(moduleConstants.canCoderId);
+        this.angleEncoderV6 = new CANcoder(moduleConstants.canCoderId);
+        this.angleEncoder = new CANCoder(moduleConstants.canCoderId);
+        
+        // Angel Encoder Configuration
+        this.angleEncoder = new CANCoder(moduleConstants.canCoderId);
+        this.configAngleEncoder();
+
+        // Drive Motor Configuration
+        this.driveMotor = new CANSparkMax(moduleConstants.driveMotorId, MotorType.kBrushless);
+        this.driveEncoder = this.driveMotor.getEncoder();
+        this.configDriveMotor();
+
+        // Angle Motor Configuration
+        this.angleMotor = new CANSparkMax(moduleConstants.angleMotorId, MotorType.kBrushless);
+        this.integratedAngleEncoder = this.angleMotor.getEncoder();
+        this.configAngleMotor();
+
+        // Set the last angle to 0.0
+        this.lastAngle = getState().angle;
     }
 
     /**
@@ -84,7 +107,15 @@ public class SwerveModule {
      * 
      * This is intended to set the default strategy for each angle encoder (CANCoder)
      */
+    private void configAngleEncoderV6() {
+    }
+
     private void configAngleEncoder() {
+        angleEncoder.configFactoryDefault();
+        
+        CANCoderUtil.setCANCoderBusUsage(angleEncoder, CCUsage.kMinimal);
+        
+        angleEncoder.configAllSettings(CTREConfigs.swerveCanCoderConfig);
     }
 
     /**
@@ -212,7 +243,7 @@ public class SwerveModule {
     }
 
     public Rotation2d getCanCoder() {
-        return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition().getValueAsDouble());
+        return Rotation2d.fromDegrees(angleEncoderV6.getAbsolutePosition().getValueAsDouble());
     }
 
     public SwerveModuleState getState() {

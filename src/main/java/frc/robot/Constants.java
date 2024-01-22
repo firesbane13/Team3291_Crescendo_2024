@@ -111,8 +111,11 @@ public final class Constants {
     public static final boolean driveInvert = false;
     public static final boolean angleInvert = true;
 
+    /* Angle Encoder Invert */
+    public static final boolean canCoderInvert = false;
+
     // Angle Encoder Invert
-    public static final SensorDirectionValue canCoderInvert = SensorDirectionValue.Clockwise_Positive;
+    public static final SensorDirectionValue canCoderInvert_v6 = SensorDirectionValue.Clockwise_Positive;
 
     // Angle Motor PID Values
     public static final double angleKP = 0.003; //play around with/tune this later 

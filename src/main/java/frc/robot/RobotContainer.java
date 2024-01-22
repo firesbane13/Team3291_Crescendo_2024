@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.Constants.Swerve;
 // import frc.robot.Constants.OperatorConstants;
 // import frc.robot.commands.Autos;
 // import frc.robot.commands.ExampleCommand;
@@ -16,6 +15,7 @@ import frc.robot.commands.drivetrain.SwerveDrive;
 import frc.robot.commands.intake.PickUpCommand;
 import frc.robot.commands.intake.ReleasePieceCommand;
 import frc.robot.commands.launcher.LaunchCommand;
+import frc.robot.commands.launcher.ResetLauncherCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 // import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -64,6 +64,7 @@ public class RobotContainer {
 
   // LAUNCHER
   private LaunchCommand launch = new LaunchCommand(launcherSubsystem);
+  private ResetLauncherCommand resetLauncher = new ResetLauncherCommand(launcherSubsystem);
   
   // CLIMBER
   private ClimbUpCommand climbUp = new ClimbUpCommand(climberSubsystem);
@@ -120,7 +121,8 @@ public class RobotContainer {
     );
 
     controller01.button(Constants.ControllerButtons.a).whileTrue(launch);
-    controller01.button(Constants.ControllerButtons.b).whileTrue(climbUp);
+    controller00.button(Constants.ControllerButtons.b).whileTrue(resetLauncher);
+    controller01.button(Constants.ControllerButtons.x).whileTrue(climbUp);
     controller01.button(Constants.ControllerButtons.y).whileTrue(lowerRobot);
     controller01.button(Constants.ControllerButtons.rb).whileTrue(pickUp);
     controller01.button(Constants.ControllerButtons.lb).whileTrue(releasePiece);

@@ -4,11 +4,17 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LauncherSubsystem extends SubsystemBase {
   /** Creates a new LauncherSubsystem. */
-  public LauncherSubsystem() {}
+  public LauncherSubsystem() {
+  }
+
+  public LauncherSubsystem(CANSparkMax launcherMotor) {
+  }
 
   @Override
   public void periodic() {

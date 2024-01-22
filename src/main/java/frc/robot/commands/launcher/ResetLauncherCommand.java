@@ -7,10 +7,14 @@ package frc.robot.commands.launcher;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LauncherSubsystem;
 
-public class LaunchCommand extends Command {
-  /** Creates a new LaunchCommand. */
-  public LaunchCommand(LauncherSubsystem launcherSubsystem) {
+public class ResetLauncherCommand extends Command {
+  public LauncherSubsystem launcherSubsystem;
+
+  /** Creates a new ResetLauncherCommand. */
+  public ResetLauncherCommand(LauncherSubsystem launcherSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
+
+    this.launcherSubsystem = launcherSubsystem;
     addRequirements(launcherSubsystem);
   }
 
@@ -29,8 +33,6 @@ public class LaunchCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    boolean status = false;
-
-    return status;
+    return false;
   }
 }
