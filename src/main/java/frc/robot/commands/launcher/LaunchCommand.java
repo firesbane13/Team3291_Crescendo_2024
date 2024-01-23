@@ -10,11 +10,11 @@ import frc.robot.subsystems.LauncherSubsystem;
 
 public class LaunchCommand extends Command {
   public LauncherSubsystem launcherSubsystem;
+  public boolean feederStarted = false;
 
   /** Creates a new LaunchCommand. */
   public LaunchCommand(LauncherSubsystem launcherSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
-
     this.launcherSubsystem = launcherSubsystem;
     addRequirements(launcherSubsystem);
   }
@@ -22,13 +22,20 @@ public class LaunchCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    this.launcherSubsystem.setLauncherSpeed(Launcher.launcherSpeed);
-    this.launcherSubsystem.setFeederSpeed(Launcher.feederSpeed);
+    this.launcherSubsystem.setLauncherVelocity(Launcher.launcherSpeed);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    double velocity = this.launcherSubsystem.getLauncherVelocity();
+
+    // If the launcher is at the desired speed, start the feeder
+    if (velocity >= Launcher.launcherSpeed && !this.feederStarted) {
+      this.launcherSubsystem.setFeederVelocity(Launcher.feederSpeed);
+      this.feederStarted = true;
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
