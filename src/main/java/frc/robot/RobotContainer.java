@@ -124,8 +124,8 @@ public class RobotContainer {
     controller00.button(Constants.ControllerButtons.b).whileTrue(resetLauncher);
     controller01.button(Constants.ControllerButtons.x).whileTrue(climbUp);
     controller01.button(Constants.ControllerButtons.y).whileTrue(lowerRobot);
-    controller01.button(Constants.ControllerButtons.rb).whileTrue(pickUp);
-    controller01.button(Constants.ControllerButtons.lb).whileTrue(releasePiece);
+    // controller01.button(Constants.ControllerButtons.rb).whileTrue(pickUp);
+    // controller01.button(Constants.ControllerButtons.lb).whileTrue(releasePiece);
   }
 
   /**

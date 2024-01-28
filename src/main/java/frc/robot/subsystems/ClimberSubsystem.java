@@ -39,31 +39,61 @@ public class ClimberSubsystem extends SubsystemBase {
     this.configurePID(this.climberPIDRight, Climber.climberRightP, Climber.climberRightI, Climber.climberRightD, Climber.climberRightIz, Climber.climberRightFF, Climber.climberRightMaxOutput, Climber.climberRightMinOutput);
   }
 
+  /**
+   * Sets climber left motor speed.
+   * 
+   * @param speed
+   */
   public void setClimberLeftSpeed(double speed) {
     this.climberMotorLeft.set(speed);
   }
 
+  /**
+   * Sets climber right motor speed.
+   * 
+   * @param speed
+   */
   public void setClimberRightSpeed(double speed) {
     this.climberMotorRight.set(speed);
   }
 
+  /**
+   * Sets both climber motor speeds.
+   * 
+   * @param speed
+   */
   public void setClimberSpeed(double speed) {
     this.climberMotorLeft.set(speed);
     this.climberMotorRight.set(speed);
   }
 
+  /**
+   * Sets climber left motor velocity.
+   * 
+   * @param velocity
+   */
   public void setLeftClimberVelocity(double velocity) {
     double targetVelocity = velocity * Climber.climberLeftMaxRPM;
 
     this.climberPIDLeft.setReference(targetVelocity, CANSparkMax.ControlType.kVelocity);
   }
 
+  /**
+   * Sets climber right motor velocity.
+   * 
+   * @param velocity
+   */
   public void setRightClimberVelocity(double velocity) {
     double targetVelocity = velocity * Climber.climberRightMaxRPM;
 
     this.climberPIDRight.setReference(targetVelocity, CANSparkMax.ControlType.kVelocity);
   }
 
+  /**
+   * Sets both climber motor velocities.
+   * 
+   * @param velocity
+   */
   public void setClimberVelocity(double velocity) {
     double targetVelocity = velocity * Climber.climberLeftMaxRPM;
 
@@ -71,23 +101,67 @@ public class ClimberSubsystem extends SubsystemBase {
     this.climberPIDRight.setReference(targetVelocity, CANSparkMax.ControlType.kVelocity);
   }
 
+  /**
+   * Gets climber left motor velocity.
+   * 
+   * @return
+   */
   public double getLeftClimberVelocity() {
     return this.climberEncoderLeft.getVelocity();
   }
 
+  /**
+   * Gets climber right motor velocity.
+   * 
+   * @return
+   */
   public double getRightClimberVelocity() {
     return this.climberEncoderRight.getVelocity();
   }
 
+  /**
+   * Stops climber motors.
+   */
   public void stopClimber() {
     this.climberMotorLeft.set(0);
     this.climberMotorRight.set(0);
   }
 
+  /**
+   * Stops climber left motor.
+   */
+  public void stopLeftClimber() {
+    this.climberMotorLeft.set(0);
+  }
+
+  /**
+   * Stops climber right motor.
+   */
+  public void stopRightClimber() {
+    this.climberMotorRight.set(0);
+  }
+
+  /**
+   * Configures motor.
+   * 
+   * @param motor
+   */
   private void configMotor(CANSparkMax motor) {
     motor.restoreFactoryDefaults();
   }
 
+  /**
+   * Configures PID.
+   * 
+   * @param pid
+   * @param kP
+   * @param kI
+   * @param kD
+   * @param kIz
+   * @param kFF
+   * @param kMaxOutput
+   * @param kMinOutput
+   */
   private void configurePID(SparkPIDController pid, double kP, double kI, double kD, double kIz, double kFF, double kMaxOutput, double kMinOutput) {
     pid.setP(kP);
     pid.setI(kI);

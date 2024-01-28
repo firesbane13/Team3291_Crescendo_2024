@@ -200,8 +200,8 @@ public final class Constants {
   }
 
   public static final class Launcher {
-    public static final int launcherMotorID = 7;
-    public static final int feederMotorID = 8;
+    public static final int launcherMotorID = 14;
+    public static final int feederMotorID = 15;
 
     public static final double launcherP = 0.000006;
     public static final double launcherI = 0.0000000;
@@ -226,23 +226,29 @@ public final class Constants {
     public static final double launcherSpeed = 1.0;
     public static final double feederSpeed = 0.5;
 
-    public static final double launcherSpeedSlow = 0.25;
-    public static final double feederSpeedSlow = 0.25;
+    public static final double launcherSpeedSlow = 0.5;
+    public static final double feederSpeedSlow = 0.5;
   }
 
   public static final class Intake {
-    public static final int intakeMotorID = 9;
-    public static final int intakeRotationMotorID = 10;
-    public static final int intakeRotationEncoderA = 0;
-    public static final int intakeRotationEncoderB = 1;
+    public static final int intakeMotorID = 16;
+    public static final int intakeRotationMotorID = 17;
+    public static final int intakeRotationEncoder = 0;
+    public static final int intakeRotationLimitSwitch = 1;
 
     public static final double intakeP = 0.0001;
     public static final double intakeI = 0.0000001;
     public static final double intakeD = 0.0001;
+    public static final double intakeFF = 0.000015;
+    public static final double intakeIz = 0.0000;
+    public static final double intakeMaxOutput = 1.0;
+    public static final double intakeMinOutput = -1.0;
+    public static final double intakeMaxRPM = 5700.0;
+    public static final double intakeMinRPM = 0.0;
 
-    public static final double intakeRotationP = 0.0001;
-    public static final double intakeRotationI = 0.0000001;
-    public static final double intakeRotationD = 0.0001;
+    public static final double intakeRotationP = 0.12;
+    public static final double intakeRotationI = 0.0;
+    public static final double intakeRotationD = 0.001;
 
     public static final double intakeSpeed = 0.5;
     public static final double intakeRotationSpeed = 0.5;
@@ -251,8 +257,8 @@ public final class Constants {
   }
 
   public static final class Climber {
-    public static final int climberMotorLeftID = 11;
-    public static final int climberMotorRightID = 12;
+    public static final int climberMotorLeftID = 18;
+    public static final int climberMotorRightID = 19;
 
     public static final double climberLeftP = 0.0001;
     public static final double climberLeftI = 0.0000001;
